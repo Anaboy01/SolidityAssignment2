@@ -105,6 +105,58 @@ describe("Todo Test", function () {
         expect(await todo.getAllTodo()).to.be.empty;
     })
 
+    it("should be able to update todo list", async function(){
+        const {todo, owner} = await loadFixture(deployTodoFixture);
+        const updatedTodo = {
+            title: "Feed the Cats",
+            desc: "Feed them beans",
+            status: 2
+        }
+
+        await todo.connect(owner).createTodo(todoList1.title, todoList1.desc);
+
+
+        await todo.connect(owner).updateTodo(0, updatedTodo.title, updatedTodo.desc);
+
+        expect(await todo.getTodo(0)).deep.equal([updatedTodo.title,updatedTodo.desc,updatedTodo.status.toString()]);
+    })
+
+    it("Todo Status should be updated to done", async function(){
+        const {todo, owner} = await loadFixture(deployTodoFixture);
+        
+
+        await todo.connect(owner).createTodo(todoList1.title, todoList1.desc);
+
+
+        await todo.connect(owner).todoDonDo(0);
+
+        expect(await todo.getTodo(0)).deep.equal([todoList1.title,todoList1.desc,"3"]);
+    })
+
+    it("To be able to get all lists", async function(){
+        const {todo, owner} = await loadFixture(deployTodoFixture);
+        
+        await todo.connect(owner).getAllTodo();
+
+        expect(await todo.getAllTodo()).deep.equal([]);
+    })
+
+    it("To be able to get a list", async function(){
+        const {todo, owner} = await loadFixture(deployTodoFixture);
+        
+
+        await todo.connect(owner).createTodo(todoList1.title, todoList1.desc);
+
+
+        await todo.connect(owner).getTodo(0);
+
+        expect(await todo.getAllTodo()).deep.equal([[
+            todoList1.title,
+            todoList1.desc,
+            todoList1.status.toString()
+        ]]);
+    })
+
     
 
    
